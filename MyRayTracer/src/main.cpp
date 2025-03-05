@@ -1,6 +1,9 @@
 #include <iostream>
 #include <fstream>
 
+#include "Color.h"
+#include "Vector.h"
+
 int main()
 {
 	int Width = 256;
@@ -16,15 +19,8 @@ int main()
 	for (int j = 0; j < Height; ++j) {
 		std::clog << "\rScanlines remaining: " << (Height - j) << ' ' << std::flush;
 		for (int i = 0; i < Width; ++i) {
-			float r = (float)i / (Width - 1);
-			float g = (float)j / (Height - 1);
-			float b = 0.0f;
-
-			int ir = (int)(r * 255);
-			int ig = (int)(g * 255);
-			int ib = (int)(b * 255);
-
-			out << ir << " " << ig << " " << ib << "\n";
+			auto pixel_color = color((float)i / (Width - 1), (float)j / (Height - 1), 0.0f);
+			write_color(out, pixel_color);
 		}
 	}
 	std::clog << "\rDone.                 \n";
