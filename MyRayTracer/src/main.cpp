@@ -14,6 +14,7 @@ int main()
 	out << "P3\n" << Width << " " << Height << "\n255\n";
 
 	for (int j = 0; j < Height; ++j) {
+		std::clog << "\rScanlines remaining: " << (Height - j) << ' ' << std::flush;
 		for (int i = 0; i < Width; ++i) {
 			float r = (float)i / (Width - 1);
 			float g = (float)j / (Height - 1);
@@ -26,6 +27,7 @@ int main()
 			out << ir << " " << ig << " " << ib << "\n";
 		}
 	}
+	std::clog << "\rDone.                 \n";
 	out.close();
 	return 0;
 }
