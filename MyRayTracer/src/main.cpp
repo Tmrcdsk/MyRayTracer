@@ -6,7 +6,9 @@
 #include "Ray.h"
 
 color castRay(const Ray& ray) {
-	return color(0.0f);
+	vec3 unit_dir = ray.GetDirection().normalized();
+	float a = 0.5f * (unit_dir.y + 1.0f);
+	return (1.0f - a) * color(1.0f) + a * color(0.5f, 0.7f, 1.0f);
 }
 
 int main()
