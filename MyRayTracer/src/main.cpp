@@ -1,26 +1,15 @@
-#include <iostream>
+#include "Global.h"
+
 #include <fstream>
 
-#include "Color.h"
-#include "Vector.h"
-#include "Ray.h"
+#include "Hittable.h"
+#include "HittableList.h"
+#include "Sphere.h"
 
-float hitSphere(const vec3& center, float radius, const Ray& ray) {
-	vec3 oc = center - ray.GetOrigin();
-	float a = ray.GetDirection().norm2();
-	float h = dot(ray.GetDirection(), oc);
-	float c = oc.norm2() - radius * radius;
-	float discriminant = h * h - a * c;
-	if (discriminant < 0)
-		return -1.0f;
-	return (h - std::sqrtf(discriminant)) / a;
-}
-
-color castRay(const Ray& ray) {
-	float t = hitSphere(vec3(0.0f, 0.0f, -1.0f), 0.5f, ray);
-	if (t > 0.0f) {
-		vec3 N = (ray.at(t) - vec3(0.0f, 0.0f, -1.0f)).normalized();
-		return 0.5f * color(N + vec3(1.0f));
+color castRay(const Ray& ray, const Hittable& world) {
+	HitPayload payload;
+	if (world.hit(ray, 0.0f, infinity, payload)) {
+		return 0.5f * (payload.normal + color(1.0f));
 	}
 
 	vec3 unit_dir = ray.GetDirection().normalized();
@@ -33,6 +22,10 @@ int main()
 	int Width = 400;
 	int Height = 225;
 	float aspect_ratio = (float)Width / Height;
+
+	HittableList world;
+	world.add(std::make_shared<Sphere>(vec3(0.0f, 0.0f, -1.0f), 0.5f));
+	world.add(std::make_shared<Sphere>(vec3(0.0f, -100.5f, -1.0f), 100.0f));
 
 	// Camera
 	float focal_length = 1.0f;
@@ -66,7 +59,7 @@ int main()
 			vec3 pixel_center = pixel00_loc + ((float)i * pixel_delta_u) + ((float)j * pixel_delta_v);
 			Ray ray(camera_center, pixel_center - camera_center);
 
-			color pixel_color = castRay(ray);
+			color pixel_color = castRay(ray, world);
 			write_color(out, pixel_color);
 		}
 	}
