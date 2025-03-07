@@ -7,13 +7,13 @@
 
 float hitSphere(const vec3& center, float radius, const Ray& ray) {
 	vec3 oc = center - ray.GetOrigin();
-	float a = dot(ray.GetDirection(), ray.GetDirection());
-	float b = -2.0f * dot(ray.GetDirection(), oc);
-	float c = dot(oc, oc) - radius * radius;
-	float discriminant = b * b - 4 * a * c;
+	float a = ray.GetDirection().norm2();
+	float h = dot(ray.GetDirection(), oc);
+	float c = oc.norm2() - radius * radius;
+	float discriminant = h * h - a * c;
 	if (discriminant < 0)
 		return -1.0f;
-	return (-b - std::sqrtf(discriminant)) / (2.0f * a);
+	return (h - std::sqrtf(discriminant)) / a;
 }
 
 color castRay(const Ray& ray) {
