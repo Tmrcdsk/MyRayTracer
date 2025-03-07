@@ -15,6 +15,7 @@ int main()
 	Camera camera;
 	camera.Width = 400;
 	camera.Height = 225;
+	camera.SPP = 100;
 
 	camera.render(world);
 	return 0;

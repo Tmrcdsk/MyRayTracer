@@ -9,6 +9,7 @@ class Camera
 public:
 	int Width = 400;
 	int Height = 225;
+	int SPP = 10; // Count of random samples for each pixel (Sample Per Pixel)
 
 	void render(const Hittable& world) {
 		Initialize();
@@ -23,11 +24,12 @@ public:
 		for (int j = 0; j < Height; ++j) {
 			std::clog << "\rScanlines remaining: " << (Height - j) << ' ' << std::flush;
 			for (int i = 0; i < Width; ++i) {
-				vec3 pixel_center = pixel00_loc + ((float)i * pixel_delta_u) + ((float)j * pixel_delta_v);
-				Ray ray(center, pixel_center - center);
-
-				color pixel_color = castRay(ray, world);
-				write_color(out, pixel_color);
+				color pixel_color(0.0f);
+				for (int sample = 0; sample < SPP; ++sample) {
+					Ray ray = getRay(i, j);
+					pixel_color += castRay(ray, world);
+				}
+				write_color(out, pixelSamplesScale * pixel_color);
 			}
 		}
 		std::clog << "\rDone.                 \n";
@@ -36,6 +38,8 @@ public:
 
 private:
 	void Initialize() {
+		pixelSamplesScale = 1.0f / SPP;
+
 		center = vec3(0.0f);
 
 		// Determine viewport dimensions.
@@ -56,6 +60,26 @@ private:
 		pixel00_loc = viewport_upper_left + 0.5f * (pixel_delta_u + pixel_delta_v);
 	}
 
+	Ray getRay(int i, int j) const {
+		// Construct a camera ray originating from the origin and directed at randomly sampled
+		// point around the pixel location i, j.
+
+		vec3 offset = sampleSquare();
+		vec3 pixelSample = pixel00_loc +
+			((i + offset.x) * pixel_delta_u) +
+			((j + offset.y) * pixel_delta_v);
+
+		vec3 rayOrig = center;
+		vec3 rayDir = pixelSample - rayOrig;
+
+		return Ray(rayOrig, rayDir);
+	}
+
+	vec3 sampleSquare() const {
+		// Returns the vector to a random point in the [-.5,-.5]-[+.5,+.5] unit square.
+		return vec3(randomFloat() - 0.5f, randomFloat() - 0.5f, 0.0f);
+	}
+
 	color castRay(const Ray& ray, const Hittable& world) const {
 		HitPayload payload;
 		if (world.hit(ray, Interval(0.0f, infinity), payload)) {
@@ -69,6 +93,7 @@ private:
 
 private:
 	float aspect_ratio = (float)Width / Height;
+	float pixelSamplesScale; // Color scale factor for a sum of pixel samples
 	vec3 center;
 	vec3 pixel00_loc;
 	vec3 pixel_delta_u;
