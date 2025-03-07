@@ -8,7 +8,7 @@
 
 color castRay(const Ray& ray, const Hittable& world) {
 	HitPayload payload;
-	if (world.hit(ray, 0.0f, infinity, payload)) {
+	if (world.hit(ray, Interval(0.0f, infinity), payload)) {
 		return 0.5f * (payload.normal + color(1.0f));
 	}
 

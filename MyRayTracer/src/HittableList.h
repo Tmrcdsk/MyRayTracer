@@ -15,13 +15,13 @@ public:
 
 	void add(std::shared_ptr<Hittable> object) { objects.push_back(object); }
 
-	bool hit(const Ray& ray, float tmin, float tmax, HitPayload& payload) const {
+	bool hit(const Ray& ray, Interval t, HitPayload& payload) const {
 		HitPayload tmpPayload;
 		bool hitAnything = false;
-		float currentClosest = tmax;
+		float currentClosest = t.max;
 
 		for (const auto& object : objects) {
-			if (object->hit(ray, tmin, currentClosest, tmpPayload)) {
+			if (object->hit(ray, Interval(t.min, currentClosest), tmpPayload)) {
 				hitAnything = true;
 				currentClosest = tmpPayload.t;
 				payload = tmpPayload;
