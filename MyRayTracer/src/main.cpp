@@ -5,18 +5,23 @@
 #include "Vector.h"
 #include "Ray.h"
 
-bool hitSphere(const vec3& center, float radius, const Ray& ray) {
+float hitSphere(const vec3& center, float radius, const Ray& ray) {
 	vec3 oc = center - ray.GetOrigin();
 	float a = dot(ray.GetDirection(), ray.GetDirection());
 	float b = -2.0f * dot(ray.GetDirection(), oc);
 	float c = dot(oc, oc) - radius * radius;
 	float discriminant = b * b - 4 * a * c;
-	return discriminant >= 0.0f;
+	if (discriminant < 0)
+		return -1.0f;
+	return (-b - std::sqrtf(discriminant)) / (2.0f * a);
 }
 
 color castRay(const Ray& ray) {
-	if (hitSphere(vec3(0.0f, 0.0f, -1.0f), 0.5f, ray))
-		return color(1.0f, 0.0f, 0.0f);
+	float t = hitSphere(vec3(0.0f, 0.0f, -1.0f), 0.5f, ray);
+	if (t > 0.0f) {
+		vec3 N = (ray.at(t) - vec3(0.0f, 0.0f, -1.0f)).normalized();
+		return 0.5f * color(N + vec3(1.0f));
+	}
 
 	vec3 unit_dir = ray.GetDirection().normalized();
 	float a = 0.5f * (unit_dir.y + 1.0f);
