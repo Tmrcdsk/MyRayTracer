@@ -10,6 +10,7 @@ public:
 	int Width = 400;
 	int Height = 225;
 	int SPP = 10; // Count of random samples for each pixel (Sample Per Pixel)
+	int maxDepth = 10; // Maximum number of ray bounces into scene
 
 	void render(const Hittable& world) {
 		Initialize();
@@ -27,7 +28,7 @@ public:
 				color pixel_color(0.0f);
 				for (int sample = 0; sample < SPP; ++sample) {
 					Ray ray = getRay(i, j);
-					pixel_color += castRay(ray, world);
+					pixel_color += castRay(ray, world, maxDepth);
 				}
 				write_color(out, pixelSamplesScale * pixel_color);
 			}
@@ -80,11 +81,14 @@ private:
 		return vec3(randomFloat() - 0.5f, randomFloat() - 0.5f, 0.0f);
 	}
 
-	color castRay(const Ray& ray, const Hittable& world) const {
+	color castRay(const Ray& ray, const Hittable& world, int depth) const {
+		if (depth <= 0)
+			return color(0.0f);
+
 		HitPayload payload;
 		if (world.hit(ray, Interval(0.0f, infinity), payload)) {
 			vec3 dir = randomOnHemisphere(payload.normal);
-			return 0.5f * castRay(Ray(payload.p, dir), world);
+			return 0.5f * castRay(Ray(payload.p, dir), world, depth - 1);
 		}
 
 		vec3 unit_dir = ray.GetDirection().normalized();
