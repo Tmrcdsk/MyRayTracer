@@ -83,7 +83,8 @@ private:
 	color castRay(const Ray& ray, const Hittable& world) const {
 		HitPayload payload;
 		if (world.hit(ray, Interval(0.0f, infinity), payload)) {
-			return 0.5f * (payload.normal + color(1.0f));
+			vec3 dir = randomOnHemisphere(payload.normal);
+			return 0.5f * castRay(Ray(payload.p, dir), world);
 		}
 
 		vec3 unit_dir = ray.GetDirection().normalized();

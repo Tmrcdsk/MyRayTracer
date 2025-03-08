@@ -45,6 +45,10 @@ struct vec3
 		float length = norm();
 		return vec3(x / length, y / length, z / length);
 	}
+
+	static vec3 Random() { return vec3(randomFloat(), randomFloat(), randomFloat()); }
+	static vec3 Random(float min, float max) { return vec3(randomFloat(min, max), randomFloat(min, max), randomFloat(min, max)); }
+
 };
 
 inline vec3 operator*(float k, const vec3& v) { return vec3(k * v.x, k * v.y, k * v.z); }
@@ -54,3 +58,19 @@ inline std::ostream& operator<<(std::ostream& out, const vec3& v) {
 
 inline float dot(const vec3& a, const vec3& b) { return a.x * b.x + a.y * b.y + a.z * b.z; }
 inline vec3 cross(const vec3& a, const vec3& b) { return vec3(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x); }
+
+inline vec3 randomUnit() {
+	while (true) {
+		vec3 p = vec3::Random(-1.0f, 1.0f);
+		float lensq = p.norm2();
+		if (1e-160 < lensq && lensq <= 1)
+			return p / sqrtf(lensq);
+	}
+}
+
+inline vec3 randomOnHemisphere(const vec3& normal) {
+	vec3 onUnitSphere = randomUnit();
+	if (dot(onUnitSphere, normal) > 0.0f) // In the same hemisphere as the normal
+		return onUnitSphere;
+	return -onUnitSphere;
+}
