@@ -86,7 +86,7 @@ private:
 			return color(0.0f);
 
 		HitPayload payload;
-		if (world.hit(ray, Interval(0.0f, infinity), payload)) {
+		if (world.hit(ray, Interval(0.001f, infinity), payload)) {
 			vec3 dir = randomOnHemisphere(payload.normal);
 			return 0.5f * castRay(Ray(payload.p, dir), world, depth - 1);
 		}
