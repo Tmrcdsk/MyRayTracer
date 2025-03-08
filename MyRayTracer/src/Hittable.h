@@ -2,10 +2,13 @@
 
 #include "Global.h"
 
+class Material;
+
 struct HitPayload
 {
 	vec3 p;
 	vec3 normal;
+	std::shared_ptr<Material> material;
 	float t;
 	bool front_face;
 

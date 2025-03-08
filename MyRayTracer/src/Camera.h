@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Hittable.h"
+#include "Material.h"
 
 #include <fstream>
 
@@ -87,8 +88,11 @@ private:
 
 		HitPayload payload;
 		if (world.hit(ray, Interval(0.001f, infinity), payload)) {
-			vec3 dir = payload.normal + randomUnit();
-			return 0.5f * castRay(Ray(payload.p, dir), world, depth - 1);
+			Ray scattered;
+			color attenuation;
+			if (payload.material->Scatter(ray, payload, attenuation, scattered))
+				return attenuation * castRay(scattered, world, depth - 1);
+			return color(0.0f);
 		}
 
 		vec3 unit_dir = ray.GetDirection().normalized();

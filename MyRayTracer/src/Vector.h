@@ -46,6 +46,11 @@ struct vec3
 		return vec3(x / length, y / length, z / length);
 	}
 
+	bool nearZero() const {
+		auto s = 1e-8;
+		return (std::fabs(x) < s) && (std::fabs(y) < s) && (std::fabs(z) < s);
+	}
+
 	static vec3 Random() { return vec3(randomFloat(), randomFloat(), randomFloat()); }
 	static vec3 Random(float min, float max) { return vec3(randomFloat(min, max), randomFloat(min, max), randomFloat(min, max)); }
 
@@ -73,4 +78,8 @@ inline vec3 randomOnHemisphere(const vec3& normal) {
 	if (dot(onUnitSphere, normal) > 0.0f) // In the same hemisphere as the normal
 		return onUnitSphere;
 	return -onUnitSphere;
+}
+
+inline vec3 reflect(const vec3& I, const vec3& N) {
+	return I - 2.0f * dot(I, N) * N;
 }
