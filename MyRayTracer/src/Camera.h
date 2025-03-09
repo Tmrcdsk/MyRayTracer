@@ -14,6 +14,9 @@ public:
 	int maxDepth = 10; // Maximum number of ray bounces into scene
 
 	float vfov = 90.0f; // Vertical field of view
+	vec3 lookFrom = vec3(0.0f, 0.0f, 0.0f); // Point camera is looking from
+	vec3 lookAt = vec3(0.0f, 0.0f, -1.0f);	// Point camera is looking at
+	vec3 vUp = vec3(0.0f, 1.0f, 0.0f);		// Camera-relative "up" direction
 
 	void render(const Hittable& world) {
 		Initialize();
@@ -44,25 +47,30 @@ private:
 	void Initialize() {
 		pixelSamplesScale = 1.0f / SPP;
 
-		center = vec3(0.0f);
+		center = lookFrom;
 
 		// Determine viewport dimensions.
-		float focal_length = 1.0f;
+		float focal_length = (lookAt - lookFrom).norm();
 		float theta = Radians(vfov);
 		float h = std::tanf(theta / 2.0f);
 		float viewport_height = 2.0f * h * focal_length;
 		float viewport_width = viewport_height * aspect_ratio;
 
+		// Calculate the u,v,w unit basis vectors for the camera coordinate frame.
+		w = (lookFrom - lookAt).normalized();
+		u = cross(vUp, w).normalized();
+		v = cross(w, u);
+
 		// Calculate the vectors across the horizontal and down the vertical viewport edges.
-		vec3 viewport_u = vec3(viewport_width, 0.0f, 0.0f);
-		vec3 viewport_v = vec3(0.0f, -viewport_height, 0.0f);
+		vec3 viewport_u = viewport_width * u;
+		vec3 viewport_v = viewport_height * -v;
 
 		// Calculate the horizontal and vertical delta vectors from pixel to pixel.
 		pixel_delta_u = viewport_u / (float)Width;
 		pixel_delta_v = viewport_v / (float)Height;
 
 		// Calculate the location of the upper left pixel.
-		vec3 viewport_upper_left = center - vec3(0.0f, 0.0f, focal_length) - viewport_u / 2.0f - viewport_v / 2.0f;
+		vec3 viewport_upper_left = lookFrom - (focal_length * w) - viewport_u / 2.0f - viewport_v / 2.0f;
 		pixel00_loc = viewport_upper_left + 0.5f * (pixel_delta_u + pixel_delta_v);
 	}
 
@@ -111,5 +119,6 @@ private:
 	vec3 pixel00_loc;
 	vec3 pixel_delta_u;
 	vec3 pixel_delta_v;
+	vec3 u, v, w; // Camera frame basis vectors
 
 };
