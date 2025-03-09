@@ -61,18 +61,26 @@ public:
 		float ri = payload.front_face ? (1.0f / refractIndex) : refractIndex;
 
 		vec3 unitDir = rayIn.GetDirection().normalized();
-		float cosi = std::fmax(-1.0f, fmin(1.0f, dot(-unitDir, payload.normal)));
+		float cosi = std::fmax(-1.0f, std::fmin(1.0f, dot(-unitDir, payload.normal)));
 		float sini = std::sqrtf(1.0f - cosi * cosi);
 
 		bool cannotRefract = ri * sini > 1.0f;
 		vec3 dir;
-		if (cannotRefract) // Total Internal Reflection
+		if (cannotRefract || reflectance(cosi, ri) > randomFloat())
 			dir = reflect(unitDir, payload.normal);
 		else
 			dir = refract(unitDir, payload.normal, ri);
 
 		scattered = Ray(payload.p, dir);
 		return true;
+	}
+
+private:
+	static float reflectance(float cosi, float refractIndex) {
+		// Use Schlick's approximation for reflectance.
+		float r0 = (1 - refractIndex) / (1 + refractIndex);
+		r0 *= r0;
+		return r0 + (1 - r0) * std::powf(1.0f - cosi, 5.0f);
 	}
 
 private:
