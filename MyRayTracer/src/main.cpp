@@ -34,6 +34,9 @@ int main()
 	camera.lookAt = vec3(0.0f, 0.0f, -1.0f);
 	camera.vUp = vec3(0.0f, 1.0f, 0.0f);
 
+	camera.defocusAngle = 10.0f;
+	camera.focusDist = 3.4f;
+
 	camera.render(world);
 	return 0;
 }

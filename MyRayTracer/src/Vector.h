@@ -73,6 +73,14 @@ inline vec3 randomUnit() {
 	}
 }
 
+inline vec3 randomInUnitDisk() {
+	while (true) {
+		vec3 p = vec3(randomFloat(-1.0f, 1.0f), randomFloat(-1.0f, 1.0f), 0.0f);
+		if (p.norm() < 1)
+			return p;
+	}
+}
+
 inline vec3 randomOnHemisphere(const vec3& normal) {
 	vec3 onUnitSphere = randomUnit();
 	if (dot(onUnitSphere, normal) > 0.0f) // In the same hemisphere as the normal
