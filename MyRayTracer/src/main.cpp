@@ -29,7 +29,7 @@ int main()
 	camera.SPP = 100;
 	camera.maxDepth = 50;
 
-	camera.vfov = 90.0f;
+	camera.vfov = 20.0f;
 	camera.lookFrom = vec3(-2.0f, 2.0f, 1.0f);
 	camera.lookAt = vec3(0.0f, 0.0f, -1.0f);
 	camera.vUp = vec3(0.0f, 1.0f, 0.0f);
