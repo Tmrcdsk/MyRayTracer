@@ -4,4 +4,4 @@
 - 运行 `GenerateProject.bat`
 - 在visual studio 2022中运行即可
 ## 运行结果
-![](results/out.jpg)
+![](results/out.png)
