@@ -13,6 +13,8 @@ public:
 	int SPP = 10; // Count of random samples for each pixel (Sample Per Pixel)
 	int maxDepth = 10; // Maximum number of ray bounces into scene
 
+	float vfov = 90.0f; // Vertical field of view
+
 	void render(const Hittable& world) {
 		Initialize();
 
@@ -46,7 +48,9 @@ private:
 
 		// Determine viewport dimensions.
 		float focal_length = 1.0f;
-		float viewport_height = 2.0f;
+		float theta = Radians(vfov);
+		float h = std::tanf(theta / 2.0f);
+		float viewport_height = 2.0f * h * focal_length;
 		float viewport_width = viewport_height * aspect_ratio;
 
 		// Calculate the vectors across the horizontal and down the vertical viewport edges.
