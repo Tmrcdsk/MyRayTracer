@@ -50,3 +50,23 @@ private:
 	color albedo;
 	float fuzz;
 };
+
+class Dielectric : public Material
+{
+public:
+	Dielectric(float refractIndex) : refractIndex(refractIndex) {}
+
+	bool Scatter(const Ray& rayIn, const HitPayload& payload, color& attenuation, Ray& scattered) const override {
+		attenuation = color(1.0f);
+		float ri = payload.front_face ? (1.0f / refractIndex) : refractIndex;
+
+		vec3 unitDir = rayIn.GetDirection().normalized();
+		vec3 refracted = refract(unitDir, payload.normal, ri);
+
+		scattered = Ray(payload.p, refracted);
+		return true;
+	}
+
+private:
+	float refractIndex;
+};

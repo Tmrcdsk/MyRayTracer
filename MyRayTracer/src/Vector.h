@@ -83,3 +83,10 @@ inline vec3 randomOnHemisphere(const vec3& normal) {
 inline vec3 reflect(const vec3& I, const vec3& N) {
 	return I - 2.0f * dot(I, N) * N;
 }
+
+inline vec3 refract(const vec3& I, const vec3& N, float EtaiOverEtat) {
+	float cosi = std::fmax(-1.0f, std::fmin(1.0f, dot(-I, N)));
+	vec3 rOutPerp = EtaiOverEtat * (I + cosi * N);
+	vec3 rOutParallel = -std::sqrtf(1 - EtaiOverEtat * EtaiOverEtat * (1 - cosi * cosi)) * N;
+	return rOutPerp + rOutParallel;
+}

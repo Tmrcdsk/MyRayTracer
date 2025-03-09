@@ -13,7 +13,7 @@ int main()
 
 	auto materialGround = std::make_shared<Lambertian>(color(0.8f, 0.8f, 0.0f));
 	auto materialCenter = std::make_shared<Lambertian>(color(0.1f, 0.2f, 0.5f));
-	auto materialLeft = std::make_shared<Metal>(color(0.8f, 0.8f, 0.8f), 0.3f);
+	auto materialLeft = std::make_shared<Dielectric>(1.5f);
 	auto materialRight = std::make_shared<Metal>(color(0.8f, 0.6f, 0.2f), 1.0f);
 
 	world.add(std::make_shared<Sphere>(vec3(0.0f, -100.5f, -1.0f), 100.0f, materialGround));
