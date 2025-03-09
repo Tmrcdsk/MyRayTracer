@@ -4,6 +4,11 @@
 #include "Material.h"
 
 #include <fstream>
+#include <thread>
+#include <mutex>
+
+static std::mutex mtx;
+int progress = 0;
 
 class Camera
 {
@@ -23,7 +28,64 @@ public:
 
 	void render(const Hittable& world) {
 		Initialize();
+#define MULTI_THREAD 1
+#if MULTI_THREAD == 1
+		std::vector<vec3> framebuffer(Width * Height);
 
+		const int numThreads = std::thread::hardware_concurrency();
+		std::vector<std::thread> threads;
+		threads.reserve(numThreads);
+
+		for (int t = 0; t < numThreads; ++t) {
+			int start = t * Height / numThreads;
+			int end = (t == numThreads - 1) ? Height : ((t + 1) * Height / numThreads);
+			threads.emplace_back([&](int start, int end) {
+				for (int j = start; j < end; ++j) {
+					for (int i = 0; i < Width; ++i) {
+						color pixel_color(0.0f);
+						for (int sample = 0; sample < SPP; ++sample) {
+							Ray ray = getRay(i, j);
+							pixel_color += castRay(ray, world, maxDepth);
+						}
+						pixel_color *= pixelSamplesScale;
+						auto r = pixel_color.x;
+						auto g = pixel_color.y;
+						auto b = pixel_color.z;
+						r = linearToGamma(r);
+						g = linearToGamma(g);
+						b = linearToGamma(b);
+						static const Interval intensity(0.000f, 0.999f);
+						int rbyte = int(256 * intensity.clamp(r));
+						int gbyte = int(256 * intensity.clamp(g));
+						int bbyte = int(256 * intensity.clamp(b));
+						framebuffer[(int)(i + j * Width)] += pixel_color;
+					}
+					mtx.lock();
+					++progress;
+					UpdateProgress(progress / (float)Height);
+					mtx.unlock();
+				}
+			}, start, end);
+		}
+		for (auto& thread : threads)
+			thread.join();
+		UpdateProgress(1.0f);
+
+
+		std::ofstream out("out.ppm");
+		if (!out) {
+			std::cerr << "Cannot create output file!\n";
+			return;
+		}
+		out << "P3\n" << Width << " " << Height << "\n255\n";
+
+		for (int j = 0; j < Height; ++j) {
+			for (int i = 0; i < Width; ++i) {
+				write_color(out, framebuffer[(int)i + j * Width]);
+			}
+		}
+		out.close();
+#else
 		std::ofstream out("out.ppm");
 		if (!out) {
 			std::cerr << "Cannot create output file!\n";
@@ -44,6 +106,7 @@ public:
 		}
 		std::clog << "\rDone.                 \n";
 		out.close();
+#endif
 	}
 
 private:
