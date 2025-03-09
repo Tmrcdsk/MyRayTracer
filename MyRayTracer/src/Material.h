@@ -61,9 +61,17 @@ public:
 		float ri = payload.front_face ? (1.0f / refractIndex) : refractIndex;
 
 		vec3 unitDir = rayIn.GetDirection().normalized();
-		vec3 refracted = refract(unitDir, payload.normal, ri);
+		float cosi = std::fmax(-1.0f, fmin(1.0f, dot(-unitDir, payload.normal)));
+		float sini = std::sqrtf(1.0f - cosi * cosi);
 
-		scattered = Ray(payload.p, refracted);
+		bool cannotRefract = ri * sini > 1.0f;
+		vec3 dir;
+		if (cannotRefract) // Total Internal Reflection
+			dir = reflect(unitDir, payload.normal);
+		else
+			dir = refract(unitDir, payload.normal, ri);
+
+		scattered = Ray(payload.p, dir);
 		return true;
 	}
 
