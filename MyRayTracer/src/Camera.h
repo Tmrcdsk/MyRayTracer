@@ -156,8 +156,9 @@ private:
 
 		vec3 rayOrig = (defocusAngle <= 0.0f) ? center : defocusDiskSample();
 		vec3 rayDir = pixelSample - rayOrig;
+		auto rayTime = randomDouble();
 
-		return Ray(rayOrig, rayDir);
+		return Ray(rayOrig, rayDir, rayTime);
 	}
 
 	vec3 sampleSquare() const {

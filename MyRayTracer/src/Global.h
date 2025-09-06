@@ -25,6 +25,18 @@ inline float randomFloat(float min, float max) {
 	return min + (max - min) * randomFloat();
 }
 
+inline double randomDouble() {
+	// Returns a random real in [0,1).
+	static std::uniform_real_distribution<double> distribution(0.0, 1.0);
+	static std::mt19937 generator;
+	return distribution(generator);
+}
+
+inline double randomDouble(double min, double max) {
+	// Returns a random real in [min,max).
+	return min + (max - min) * randomDouble();
+}
+
 inline void UpdateProgress(float progress)
 {
 	int barWidth = 70;
