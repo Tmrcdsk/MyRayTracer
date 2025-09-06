@@ -156,7 +156,7 @@ private:
 
 		vec3 rayOrig = (defocusAngle <= 0.0f) ? center : defocusDiskSample();
 		vec3 rayDir = pixelSample - rayOrig;
-		auto rayTime = randomDouble();
+		float rayTime = randomFloat();
 
 		return Ray(rayOrig, rayDir, rayTime);
 	}
