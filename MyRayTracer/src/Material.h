@@ -24,7 +24,7 @@ public:
 		if (scatterDir.nearZero())
 			scatterDir = payload.normal;
 
-		scattered = Ray(payload.p, scatterDir);
+		scattered = Ray(payload.p, scatterDir, rayIn.time());
 		attenuation = albedo;
 		return true;
 	}
@@ -41,7 +41,7 @@ public:
 	bool Scatter(const Ray& rayIn, const HitPayload& payload, color& attenuation, Ray& scattered) const override {
 		vec3 reflected = reflect(rayIn.GetDirection(), payload.normal);
 		reflected = reflected.normalized() + (fuzz * randomUnit());
-		scattered = Ray(payload.p, reflected);
+		scattered = Ray(payload.p, reflected, rayIn.time());
 		attenuation = albedo;
 		return dot(scattered.GetDirection(), payload.normal) > 0.0f;
 	}
@@ -71,7 +71,7 @@ public:
 		else
 			dir = refract(unitDir, payload.normal, ri);
 
-		scattered = Ray(payload.p, dir);
+		scattered = Ray(payload.p, dir, rayIn.time());
 		return true;
 	}
 
