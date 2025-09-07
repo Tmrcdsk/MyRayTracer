@@ -19,7 +19,7 @@ int main()
 	for (int a = -11; a < 11; ++a) {
 		for (int b = -11; b < 11; ++b) {
 			auto chooseMat = randomFloat();
-			vec3 center(a + 0.9f * randomFloat(), 0.2f, b + 0.9 * randomFloat());
+			vec3 center(a + 0.9f * randomFloat(), 0.2f, b + 0.9f * randomFloat());
 
 			if ((center - vec3(4.0f, 0.2f, 0.0f)).norm() > 0.9f) {
 				std::shared_ptr<Material> sphereMaterial;
@@ -28,7 +28,8 @@ int main()
 					// diffuse
 					vec3 albedo = color::Random() * color::Random();
 					sphereMaterial = std::make_shared<Lambertian>(albedo);
-					world.add(std::make_shared<Sphere>(center, 0.2f, sphereMaterial));
+					vec3 center2 = center + vec3(0, randomFloat(0.0f, 0.5f), 0);
+					world.add(std::make_shared<Sphere>(center, center2, 0.2f, sphereMaterial));
 				}
 				else if (chooseMat < 0.95f) {
 					// metal
@@ -56,9 +57,9 @@ int main()
 	world.add(std::make_shared<Sphere>(vec3(4.0f, 1.0f, 0.0f), 1.0f, material3));
 
 	Camera camera;
-	camera.Width = 1280;
-	camera.Height = 720;
-	camera.SPP = 500;
+	camera.Width = 400;
+	camera.Height = 225;
+	camera.SPP = 100;
 	camera.maxDepth = 50;
 
 	camera.vfov = 20.0f;
