@@ -32,6 +32,11 @@ inline double randomDouble() {
 	return distribution(generator);
 }
 
+inline int randomInt(int min, int max) {
+	// Returns a random integer in [min,max].
+	return int(randomFloat(min, max + 1));
+}
+
 inline double randomDouble(double min, double max) {
 	// Returns a random real in [min,max).
 	return min + (max - min) * randomDouble();

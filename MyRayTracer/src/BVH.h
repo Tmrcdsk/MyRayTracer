@@ -16,7 +16,30 @@ public:
 	}
 
 	BVHNode(std::vector<std::shared_ptr<Hittable>>& objects, size_t start, size_t end) {
-		// To be implemented later.
+		int axis = randomInt(0, 2);
+
+		auto comparator = (axis == 0) ? boxXCompare
+						: (axis == 1) ? boxYCompare
+									  : boxZCompare;
+
+		size_t objectSpan = end - start;
+
+		if (objectSpan == 1) {
+			left = right = objects[start];
+		}
+		else if (objectSpan == 2) {
+			left = objects[start];
+			right = objects[start + 1];
+		}
+		else {
+			std::sort(std::begin(objects) + start, std::begin(objects) + end, comparator);
+
+			auto mid = start + objectSpan / 2;
+			left = std::make_shared<BVHNode>(objects, start, mid);
+			right = std::make_shared<BVHNode>(objects, mid, end);
+		}
+
+		bbox = AABB(left->boundingBox(), right->boundingBox());
 	}
 
 	bool hit(const Ray& ray, Interval rayT, HitPayload& payload) const override {
