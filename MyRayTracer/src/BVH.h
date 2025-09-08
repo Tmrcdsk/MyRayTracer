@@ -58,4 +58,22 @@ private:
 	std::shared_ptr<Hittable> left;
 	std::shared_ptr<Hittable> right;
 	AABB bbox;
+
+	static bool boxCompare(const std::shared_ptr<Hittable> a, const std::shared_ptr<Hittable> b, int axisIndex) {
+		auto aAxisInterval = a->boundingBox().axisInterval(axisIndex);
+		auto bAxisInterval = b->boundingBox().axisInterval(axisIndex);
+		return aAxisInterval.min < bAxisInterval.min;
+	}
+
+	static bool boxXCompare(const std::shared_ptr<Hittable> a, const std::shared_ptr<Hittable> b) {
+		return boxCompare(a, b, 0);
+	}
+
+	static bool boxYCompare(const std::shared_ptr<Hittable> a, const std::shared_ptr<Hittable> b) {
+		return boxCompare(a, b, 1);
+	}
+
+	static bool boxZCompare(const std::shared_ptr<Hittable> a, const std::shared_ptr<Hittable> b) {
+		return boxCompare(a, b, 2);
+	}
 };
