@@ -18,6 +18,11 @@ public:
 		return x;
 	}
 
+	Interval expand(float delta) const {
+		auto padding = delta / 2;
+		return Interval(min - padding, max + padding);
+	}
+
 	float min, max;
 	static const Interval empty, universe;
 };
