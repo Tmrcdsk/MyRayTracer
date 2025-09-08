@@ -19,6 +19,12 @@ public:
 		y = (a[1] <= b[1]) ? Interval(a[1], b[1]) : Interval(b[1], a[1]);
 		z = (a[2] <= b[2]) ? Interval(a[2], b[2]) : Interval(b[2], a[2]);
 	}
+	
+	AABB(const AABB& box0, const AABB& box1) {
+		x = Interval(box0.x, box1.x);
+		y = Interval(box0.y, box1.y);
+		z = Interval(box0.z, box1.z);
+	}
 
 	const Interval& axisInterval(int n) const {
 		if (n == 1) return y;

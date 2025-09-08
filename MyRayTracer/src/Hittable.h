@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Global.h"
+#include "AABB.h"
 
 class Material;
 
@@ -26,4 +27,6 @@ public:
 	virtual ~Hittable() = default;
 
 	virtual bool hit(const Ray& ray, Interval t, HitPayload& payload) const = 0;
+
+	virtual AABB boundingBox() const = 0;
 };
