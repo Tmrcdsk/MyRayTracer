@@ -11,6 +11,7 @@ struct HitPayload
 	vec3 normal;
 	std::shared_ptr<Material> material;
 	float t;
+	float u, v;
 	bool front_face;
 
 	void SetFaceNormal(const Ray& ray, const vec3& outwardNormal) {
