@@ -5,6 +5,7 @@
 #include "Sphere.h"
 #include "Material.h"
 #include "BVH.h"
+#include "Texture.h"
 
 #include "Camera.h"
 
@@ -14,8 +15,8 @@ int main()
 {
 	HittableList world;
 
-	auto materialGround = std::make_shared<Lambertian>(color(0.5f, 0.5f, 0.5f));
-	world.add(std::make_shared<Sphere>(vec3(0.0f, -1000.0f, 0.0f), 1000.0f, materialGround));
+	auto checker = std::make_shared<CheckerTexture>(0.32f, color(0.2f, 0.3f, 0.1f), color(0.9f, 0.9f, 0.9f));
+	world.add(std::make_shared<Sphere>(vec3(0.0f, -1000.0f, 0.0f), 1000.0f, std::make_shared<Lambertian>(checker)));
 
 	for (int a = -11; a < 11; ++a) {
 		for (int b = -11; b < 11; ++b) {
