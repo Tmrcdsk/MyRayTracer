@@ -11,7 +11,7 @@
 
 #include <chrono>
 
-int main()
+void bouncingSpheres()
 {
 	HittableList world;
 
@@ -82,6 +82,44 @@ int main()
 	std::cout << "Time taken: " << std::chrono::duration_cast<std::chrono::hours>(stop - start).count() << " hours\n";
 	std::cout << "          : " << std::chrono::duration_cast<std::chrono::minutes>(stop - start).count() << " minutes\n";
 	std::cout << "          : " << std::chrono::duration_cast<std::chrono::seconds>(stop - start).count() << " seconds\n";
+}
 
-	return 0;
+void checkeredSpheres()
+{
+	HittableList world;
+
+	auto checker = std::make_shared<CheckerTexture>(0.32f, color(0.2f, 0.3f, 0.1f), color(0.9f, 0.9f, 0.9f));
+
+	world.add(std::make_shared<Sphere>(vec3(0.0f, -10.0f, 0.0f), 10.0f, std::make_shared<Lambertian>(checker)));
+	world.add(std::make_shared<Sphere>(vec3(0.0f,  10.0f, 0.0f), 10.0f, std::make_shared<Lambertian>(checker)));
+
+	Camera camera;
+	camera.Width = 400;
+	camera.Height = 225;
+	camera.SPP = 100;
+	camera.maxDepth = 50;
+
+	camera.vfov = 20.0f;
+	camera.lookFrom = vec3(13.0f, 2.0f, 3.0f);
+	camera.lookAt = vec3(0.0f, 0.0f, 0.0f);
+	camera.vUp = vec3(0.0f, 1.0f, 0.0f);
+
+	camera.defocusAngle = 0.0f;
+
+	auto start = std::chrono::system_clock::now();
+	camera.render(world);
+	auto stop = std::chrono::system_clock::now();
+
+	std::cout << "Render complete: \n";
+	std::cout << "Time taken: " << std::chrono::duration_cast<std::chrono::hours>(stop - start).count() << " hours\n";
+	std::cout << "          : " << std::chrono::duration_cast<std::chrono::minutes>(stop - start).count() << " minutes\n";
+	std::cout << "          : " << std::chrono::duration_cast<std::chrono::seconds>(stop - start).count() << " seconds\n";
+}
+
+int main()
+{
+	switch (2) {
+		case 1: bouncingSpheres(); break;
+		case 2: checkeredSpheres(); break;
+	}
 }
