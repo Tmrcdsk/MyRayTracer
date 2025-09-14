@@ -116,10 +116,39 @@ void checkeredSpheres()
 	std::cout << "          : " << std::chrono::duration_cast<std::chrono::seconds>(stop - start).count() << " seconds\n";
 }
 
+void earth() {
+	auto earthTexture = std::make_shared<ImageTexture>("image/earthmap.jpg");
+	auto earthSurface = std::make_shared<Lambertian>(earthTexture);
+	auto globe = std::make_shared<Sphere>(vec3(0, 0, 0), 2.0f, earthSurface);
+
+	Camera camera;
+	camera.Width = 400;
+	camera.Height = 225;
+	camera.SPP = 100;
+	camera.maxDepth = 50;
+
+	camera.vfov = 20.0f;
+	camera.lookFrom = vec3(0.0f, 0.0f, 12.0f);
+	camera.lookAt = vec3(0.0f, 0.0f, 0.0f);
+	camera.vUp = vec3(0.0f, 1.0f, 0.0f);
+
+	camera.defocusAngle = 0.0f;
+
+	auto start = std::chrono::system_clock::now();
+	camera.render(HittableList(globe));
+	auto stop = std::chrono::system_clock::now();
+
+	std::cout << "Render complete: \n";
+	std::cout << "Time taken: " << std::chrono::duration_cast<std::chrono::hours>(stop - start).count() << " hours\n";
+	std::cout << "          : " << std::chrono::duration_cast<std::chrono::minutes>(stop - start).count() << " minutes\n";
+	std::cout << "          : " << std::chrono::duration_cast<std::chrono::seconds>(stop - start).count() << " seconds\n";
+}
+
 int main()
 {
-	switch (2) {
+	switch (3) {
 		case 1: bouncingSpheres(); break;
 		case 2: checkeredSpheres(); break;
+		case 3: earth(); break;
 	}
 }
