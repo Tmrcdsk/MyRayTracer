@@ -22,5 +22,11 @@ project "MyRayTracer"
 	files
 	{
 		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp"
+		"%{prj.name}/src/**.cpp",
+		"%{prj.name}/external/**.h"
+	}
+
+	includedirs
+	{
+		"%{prj.name}"
 	}
