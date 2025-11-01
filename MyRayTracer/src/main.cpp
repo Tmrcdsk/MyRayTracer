@@ -11,6 +11,24 @@
 
 #include <chrono>
 
+#define TIMER(render)                                                          \
+do {                                                                           \
+    auto _t0 = std::chrono::steady_clock::now();                               \
+    render;                                                                    \
+    auto _t1 = std::chrono::steady_clock::now();                               \
+    auto _dt = _t1 - _t0;                                                      \
+    std::cout << "Render complete:\n";                                         \
+    std::cout << "Time taken: "                                                \
+              << std::chrono::duration_cast<std::chrono::hours>(_dt).count()   \
+              << " hours\n";                                                   \
+    std::cout << "          : "                                                \
+              << std::chrono::duration_cast<std::chrono::minutes>(_dt).count() \
+              << " minutes\n";                                                 \
+    std::cout << "          : "                                                \
+              << std::chrono::duration_cast<std::chrono::seconds>(_dt).count() \
+              << " seconds\n";                                                 \
+} while (0)
+
 void bouncingSpheres()
 {
 	HittableList world;
@@ -74,14 +92,7 @@ void bouncingSpheres()
 	camera.defocusAngle = 0.6f;
 	camera.focusDist = 10.0f;
 
-	auto start = std::chrono::system_clock::now();
-	camera.render(world);
-	auto stop = std::chrono::system_clock::now();
-
-	std::cout << "Render complete: \n";
-	std::cout << "Time taken: " << std::chrono::duration_cast<std::chrono::hours>(stop - start).count() << " hours\n";
-	std::cout << "          : " << std::chrono::duration_cast<std::chrono::minutes>(stop - start).count() << " minutes\n";
-	std::cout << "          : " << std::chrono::duration_cast<std::chrono::seconds>(stop - start).count() << " seconds\n";
+	TIMER(camera.render(world));
 }
 
 void checkeredSpheres()
@@ -106,14 +117,7 @@ void checkeredSpheres()
 
 	camera.defocusAngle = 0.0f;
 
-	auto start = std::chrono::system_clock::now();
-	camera.render(world);
-	auto stop = std::chrono::system_clock::now();
-
-	std::cout << "Render complete: \n";
-	std::cout << "Time taken: " << std::chrono::duration_cast<std::chrono::hours>(stop - start).count() << " hours\n";
-	std::cout << "          : " << std::chrono::duration_cast<std::chrono::minutes>(stop - start).count() << " minutes\n";
-	std::cout << "          : " << std::chrono::duration_cast<std::chrono::seconds>(stop - start).count() << " seconds\n";
+	TIMER(camera.render(world));
 }
 
 void earth() {
@@ -134,21 +138,38 @@ void earth() {
 
 	camera.defocusAngle = 0.0f;
 
-	auto start = std::chrono::system_clock::now();
-	camera.render(HittableList(globe));
-	auto stop = std::chrono::system_clock::now();
+	TIMER(camera.render(HittableList(globe)));
+}
 
-	std::cout << "Render complete: \n";
-	std::cout << "Time taken: " << std::chrono::duration_cast<std::chrono::hours>(stop - start).count() << " hours\n";
-	std::cout << "          : " << std::chrono::duration_cast<std::chrono::minutes>(stop - start).count() << " minutes\n";
-	std::cout << "          : " << std::chrono::duration_cast<std::chrono::seconds>(stop - start).count() << " seconds\n";
+void perlinSpheres() {
+	HittableList world;
+
+	auto pertext = std::make_shared<NoiseTexture>();
+	world.add(std::make_shared<Sphere>(vec3(0, -1000, 0), 1000, std::make_shared<Lambertian>(pertext)));
+	world.add(std::make_shared<Sphere>(vec3(0, 2, 0), 2, std::make_shared<Lambertian>(pertext)));
+
+	Camera camera;
+	camera.Width = 400;
+	camera.Height = 225;
+	camera.SPP = 100;
+	camera.maxDepth = 50;
+
+	camera.vfov = 20.0f;
+	camera.lookFrom = vec3(13.0f, 2.0f, 3.0f);
+	camera.lookAt = vec3(0.0f, 0.0f, 0.0f);
+	camera.vUp = vec3(0.0f, 1.0f, 0.0f);
+
+	camera.defocusAngle = 0.0f;
+
+	TIMER(camera.render(HittableList(world)));
 }
 
 int main()
 {
-	switch (3) {
+	switch (4) {
 		case 1: bouncingSpheres(); break;
 		case 2: checkeredSpheres(); break;
 		case 3: earth(); break;
+		case 4: perlinSpheres(); break;
 	}
 }

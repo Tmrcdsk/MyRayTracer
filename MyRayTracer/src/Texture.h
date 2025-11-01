@@ -2,6 +2,7 @@
 
 #include "Global.h"
 
+#include "Perlin.h"
 #include "RtwImage.h"
 
 class Texture
@@ -74,4 +75,17 @@ public:
 
 private:
 	RtwImage image;
+};
+
+class NoiseTexture : public Texture
+{
+public:
+	NoiseTexture() {}
+
+	color value(float u, float v, const vec3& p) const override {
+		return color(1, 1, 1) * noise.noise(p);
+	}
+
+private:
+	Perlin noise;
 };

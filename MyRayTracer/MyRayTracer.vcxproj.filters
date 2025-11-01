@@ -54,6 +54,7 @@
     <ClInclude Include="src\Vector.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="src\Perlin.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
