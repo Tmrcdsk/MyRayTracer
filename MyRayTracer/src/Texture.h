@@ -80,12 +80,13 @@ private:
 class NoiseTexture : public Texture
 {
 public:
-	NoiseTexture() {}
+	NoiseTexture(float scale) : scale(scale) {}
 
 	color value(float u, float v, const vec3& p) const override {
-		return color(1, 1, 1) * noise.noise(p);
+		return color(1, 1, 1) * noise.noise(scale * p);
 	}
 
 private:
 	Perlin noise;
+	float scale;
 };
