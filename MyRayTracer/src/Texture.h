@@ -83,7 +83,7 @@ public:
 	NoiseTexture(float scale) : scale(scale) {}
 
 	color value(float u, float v, const vec3& p) const override {
-		return color(1, 1, 1) * 0.5f * (1.0f + noise.noise(scale * p));
+		return color(1, 1, 1) * noise.turb(p, 7);
 	}
 
 private:

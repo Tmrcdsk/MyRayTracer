@@ -38,6 +38,20 @@ public:
 		return perlinInterp(c, u, v, w);
 	}
 
+	float turb(const vec3& p, int depth) const {
+		float accum = 0.0f;
+		auto term_p = p;
+		float weight = 1.0f;
+
+		for (int i = 0; i < depth; ++i) {
+			accum += weight * noise(term_p);
+			weight *= 0.5f;
+			term_p *= 2;
+		}
+
+		return std::fabs(accum);
+	}
+
 private:
 	static const int point_count = 256;
 	vec3 randvec[point_count];
