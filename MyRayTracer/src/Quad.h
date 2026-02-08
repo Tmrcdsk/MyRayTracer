@@ -36,13 +36,34 @@ public:
 		if (!interval.contains(t))
 			return false;
 
+		// Determine if the hit point lies within the planar shape using its plane coordinates.
 		auto intersection = ray.at(t);
+		vec3 planarHitptVector = intersection - Q;
+		float alpha = dot(w, cross(planarHitptVector, v));
+		float beta = dot(w, cross(u, planarHitptVector));
 
+		if (!isInterior(alpha, beta, payload))
+			return false;
+
+		// Ray hits the 2D shape; set the rest of the hit record and return true.
 		payload.t = t;
 		payload.p = intersection;
 		payload.material = mat;
 		payload.SetFaceNormal(ray, normal);
 
+		return true;
+	}
+
+	virtual bool isInterior(float a, float b, HitPayload& payload) const {
+		Interval unitInterval = Interval(0, 1);
+		// Given the hit point in plane coordinates, return false if it is outside the
+        // primitive, otherwise set the hit record UV coordinates and return true.
+
+		if (!unitInterval.contains(a) || !unitInterval.contains(b))
+			return false;
+		
+		payload.u = a;
+		payload.v = b;
 		return true;
 	}
 

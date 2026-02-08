@@ -55,6 +55,7 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\Perlin.h" />
+    <ClInclude Include="src\Quad.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
