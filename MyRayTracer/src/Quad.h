@@ -10,6 +10,7 @@ public:
 		auto n = cross(u, v);
 		normal = n.normalized();
 		D = dot(normal, Q);
+		w = n / dot(n, n);
 
 		setBoundingBox();
 	}
@@ -48,6 +49,7 @@ public:
 private:
 	vec3 Q;
 	vec3 u, v;
+	vec3 w;
 	std::shared_ptr<Material> mat;
 	AABB bbox;
 	vec3 normal;
