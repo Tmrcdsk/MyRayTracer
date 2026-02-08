@@ -10,7 +10,9 @@ public:
 	AABB() {} // The default AABB is empty, since intervals are empty by default.
 
 	AABB(const Interval& x, const Interval& y, const Interval& z)
-		: x(x), y(y), z(z) {}
+		: x(x), y(y), z(z) {
+		padToMinimums();
+	}
 
 	AABB(const vec3& a, const vec3& b) {
 		// Treat the two points a and b as extrema for the bounding box, so we don't require a
@@ -18,6 +20,8 @@ public:
 		x = (a[0] <= b[0]) ? Interval(a[0], b[0]) : Interval(b[0], a[0]);
 		y = (a[1] <= b[1]) ? Interval(a[1], b[1]) : Interval(b[1], a[1]);
 		z = (a[2] <= b[2]) ? Interval(a[2], b[2]) : Interval(b[2], a[2]);
+
+		padToMinimums();
 	}
 	
 	AABB(const AABB& box0, const AABB& box1) {
@@ -68,6 +72,15 @@ public:
 	}
 
 	static const AABB empty, universe;
+
+private:
+	void padToMinimums() {
+		// Adjust the AABB so that no side is narrower than some delta, padding if necessary.
+		float delta = 0.0001f;
+		if (x.size() < delta) x = x.expand(delta);
+		if (y.size() < delta) y = y.expand(delta);
+		if (z.size() < delta) z = z.expand(delta);
+	}
 };
 
 const AABB AABB::empty    = AABB(Interval::empty, Interval::empty, Interval::empty);
