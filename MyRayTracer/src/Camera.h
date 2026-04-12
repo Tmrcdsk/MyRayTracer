@@ -17,6 +17,7 @@ public:
 	int Height = 225;
 	int SPP = 10; // Count of random samples for each pixel (Sample Per Pixel)
 	int maxDepth = 10; // Maximum number of ray bounces into scene
+	color background; // Scene background color
 
 	float vfov = 90.0f; // Vertical field of view
 	vec3 lookFrom = vec3(0.0f, 0.0f, 0.0f); // Point camera is looking from
@@ -177,17 +178,21 @@ private:
 			return color(0.0f);
 
 		HitPayload payload;
-		if (world.hit(ray, Interval(0.001f, infinity), payload)) {
-			Ray scattered;
-			color attenuation;
-			if (payload.material->Scatter(ray, payload, attenuation, scattered))
-				return attenuation * castRay(scattered, world, depth - 1);
-			return color(0.0f);
-		}
 
-		vec3 unit_dir = ray.GetDirection().normalized();
-		float a = 0.5f * (unit_dir.y + 1.0f);
-		return (1.0f - a) * color(1.0f) + a * color(0.5f, 0.7f, 1.0f);
+		// If the ray hits nothing, return the background color.
+		if (!world.hit(ray, Interval(0.001f, infinity), payload))
+			return background;
+
+		Ray scattered;
+		color attenuation;
+		color colorFromEmission = payload.material->emitted(payload.u, payload.v, payload.p);
+
+		if (!payload.material->Scatter(ray, payload, attenuation, scattered))
+			return colorFromEmission;
+
+		color colorFromScatter = attenuation * castRay(scattered, world, depth - 1);
+
+		return colorFromEmission + colorFromScatter;
 	}
 
 private:

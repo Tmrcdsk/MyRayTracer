@@ -84,6 +84,7 @@ void bouncingSpheres()
 	camera.Height = 225;
 	camera.SPP = 100;
 	camera.maxDepth = 50;
+	camera.background = color(0.70f, 0.80f, 1.00f);
 
 	camera.vfov = 20.0f;
 	camera.lookFrom = vec3(13.0f, 2.0f, 3.0f);
@@ -110,6 +111,7 @@ void checkeredSpheres()
 	camera.Height = 225;
 	camera.SPP = 100;
 	camera.maxDepth = 50;
+	camera.background = color(0.70f, 0.80f, 1.00f);
 
 	camera.vfov = 20.0f;
 	camera.lookFrom = vec3(13.0f, 2.0f, 3.0f);
@@ -131,6 +133,7 @@ void earth() {
 	camera.Height = 225;
 	camera.SPP = 100;
 	camera.maxDepth = 50;
+	camera.background = color(0.70f, 0.80f, 1.00f);
 
 	camera.vfov = 20.0f;
 	camera.lookFrom = vec3(0.0f, 0.0f, 12.0f);
@@ -154,6 +157,7 @@ void perlinSpheres() {
 	camera.Height = 225;
 	camera.SPP = 100;
 	camera.maxDepth = 50;
+	camera.background = color(0.70f, 0.80f, 1.00f);
 
 	camera.vfov = 20.0f;
 	camera.lookFrom = vec3(13.0f, 2.0f, 3.0f);
@@ -187,6 +191,7 @@ void quads() {
 	camera.Height = 225;
 	camera.SPP = 100;
 	camera.maxDepth = 50;
+	camera.background = color(0.70f, 0.80f, 1.00f);
 
 	camera.vfov = 80.0f;
 	camera.lookFrom = vec3(0.0f, 0.0f, 9.0f);
