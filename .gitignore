@@ -6,6 +6,7 @@ bin-int/
 
 *.sln
 *.vcxproj
+*.filters
 *.user
 
 *.ppm

@@ -8,6 +8,10 @@ class Material
 public:
 	virtual ~Material() = default;
 
+	virtual color emitted(float u, float v, const vec3& p) const {
+		return color(0, 0, 0);
+	}
+
 	virtual bool Scatter(const Ray& rayIn, const HitPayload& payload, color& attenuation, Ray& scattered) const {
 		return false;
 	}
@@ -87,4 +91,18 @@ private:
 
 private:
 	float refractIndex;
+};
+
+class DiffuseLight : public Material
+{
+public:
+	DiffuseLight(std::shared_ptr<Texture> tex) : tex(tex) {}
+	DiffuseLight(const color& emit) : tex(std::make_shared<SolidColor>(emit)) {}
+
+	color emitted(float u, float v, const vec3& p) const override {
+		return tex->value(u, v, p);
+	}
+
+private:
+	std::shared_ptr<Texture> tex;
 };
