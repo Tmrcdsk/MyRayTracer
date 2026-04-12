@@ -203,13 +203,42 @@ void quads() {
 	TIMER(camera.render(HittableList(world)));
 }
 
+void simpleLight() {
+	HittableList world;
+
+	auto pertext = std::make_shared<NoiseTexture>(4);
+	world.add(std::make_shared<Sphere>(vec3(0, -1000, 0), 1000, std::make_shared<Lambertian>(pertext)));
+	world.add(std::make_shared<Sphere>(vec3(0, 2, 0), 2, std::make_shared<Lambertian>(pertext)));
+
+	auto difflight = std::make_shared<DiffuseLight>(color(4, 4, 4));
+	world.add(std::make_shared<Sphere>(vec3(0, 7, 0), 2, difflight));
+	world.add(std::make_shared<Quad>(vec3(3, 1, -2), vec3(2, 0, 0), vec3(0, 2, 0), difflight));
+
+	Camera camera;
+	camera.Width = 400;
+	camera.Height = 225;
+	camera.SPP = 100;
+	camera.maxDepth = 50;
+	camera.background = color(0, 0, 0);
+
+	camera.vfov = 20.0f;
+	camera.lookFrom = vec3(26.0f, 3.0f, 6.0f);
+	camera.lookAt = vec3(0.0f, 2.0f, 0.0f);
+	camera.vUp = vec3(0.0f, 1.0f, 0.0f);
+
+	camera.defocusAngle = 0.0f;
+
+	TIMER(camera.render(HittableList(world)));
+}
+
 int main()
 {
-	switch (5) {
+	switch (6) {
 		case 1: bouncingSpheres(); break;
 		case 2: checkeredSpheres(); break;
 		case 3: earth(); break;
 		case 4: perlinSpheres(); break;
 		case 5: quads(); break;
+		case 6: simpleLight(); break;
 	}
 }
