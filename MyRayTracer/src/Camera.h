@@ -116,6 +116,8 @@ private:
 
 		center = lookFrom;
 
+		aspect_ratio = (float)Width / Height;
+
 		// Determine viewport dimensions.
 		float focal_length = (lookAt - lookFrom).norm();
 		float theta = Radians(vfov);

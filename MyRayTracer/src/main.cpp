@@ -231,14 +231,47 @@ void simpleLight() {
 	TIMER(camera.render(HittableList(world)));
 }
 
+void cornellBox() {
+	HittableList world;
+
+	auto red = std::make_shared<Lambertian>(color(0.65f, 0.05f, 0.05f));
+	auto white = std::make_shared<Lambertian>(color(0.73f, 0.73f, 0.73f));
+	auto green = std::make_shared<Lambertian>(color(0.12f, 0.45f, 0.15f));
+	auto light = std::make_shared<DiffuseLight>(color(15, 15, 15));
+
+	world.add(std::make_shared<Quad>(vec3(555, 0, 0), vec3(0, 555, 0), vec3(0, 0, 555), green));
+	world.add(std::make_shared<Quad>(vec3(0, 0, 0), vec3(0, 555, 0), vec3(0, 0, 555), red));
+	world.add(std::make_shared<Quad>(vec3(343, 554, 332), vec3(-130, 0, 0), vec3(0, 0, -105), light));
+	world.add(std::make_shared<Quad>(vec3(0, 0, 0), vec3(555, 0, 0), vec3(0, 0, 555), white));
+	world.add(std::make_shared<Quad>(vec3(555, 555, 555), vec3(-555, 0, 0), vec3(0, 0, -555), white));
+	world.add(std::make_shared<Quad>(vec3(0, 0, 555), vec3(555, 0, 0), vec3(0, 555, 0), white));
+
+	Camera camera;
+	camera.Width = 600;
+	camera.Height = 600;
+	camera.SPP = 200;
+	camera.maxDepth = 50;
+	camera.background = color(0, 0, 0);
+
+	camera.vfov = 40.0f;
+	camera.lookFrom = vec3(278.0f, 278.0f, -800.0f);
+	camera.lookAt = vec3(278.0f, 278.0f, 0.0f);
+	camera.vUp = vec3(0.0f, 1.0f, 0.0f);
+
+	camera.defocusAngle = 0.0f;
+
+	TIMER(camera.render(HittableList(world)));
+}
+
 int main()
 {
-	switch (6) {
+	switch (7) {
 		case 1: bouncingSpheres(); break;
 		case 2: checkeredSpheres(); break;
 		case 3: earth(); break;
 		case 4: perlinSpheres(); break;
 		case 5: quads(); break;
 		case 6: simpleLight(); break;
+		case 7: cornellBox(); break;
 	}
 }
