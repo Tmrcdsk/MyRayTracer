@@ -246,6 +246,9 @@ void cornellBox() {
 	world.add(std::make_shared<Quad>(vec3(555, 555, 555), vec3(-555, 0, 0), vec3(0, 0, -555), white));
 	world.add(std::make_shared<Quad>(vec3(0, 0, 555), vec3(555, 0, 0), vec3(0, 555, 0), white));
 
+	world.add(box(vec3(130, 0, 65), vec3(295, 165, 230), white));
+	world.add(box(vec3(265, 0, 295), vec3(430, 330, 460), white));
+
 	Camera camera;
 	camera.Width = 600;
 	camera.Height = 600;
