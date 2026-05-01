@@ -119,7 +119,7 @@ public:
 			return false;
 		
 		// Transform the intersection from object space back to world space.
-		auto p = vec3(
+		payload.p = vec3(
 			(cosTheta * payload.p.x + sinTheta * payload.p.z),
 			payload.p.y,
 			(-sinTheta * payload.p.x + cosTheta * payload.p.z)

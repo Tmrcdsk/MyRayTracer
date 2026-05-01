@@ -317,9 +317,88 @@ void cornellSmoke() {
 	TIMER(camera.render(HittableList(world)));
 }
 
+void finalScene(int imageWidth, int imageHeight, int SPP, int maxDepth) {
+	HittableList boxes1;
+	auto ground = std::make_shared<Lambertian>(color(0.48f, 0.83f, 0.53f));
+
+	int boxesPerSide = 20;
+	for (int i = 0; i < boxesPerSide; ++i) {
+		for (int j = 0; j < boxesPerSide; ++j) {
+			float w = 100.0f;
+			float x0 = -1000.0f + i * w;
+			float z0 = -1000.0f + j * w;
+			float y0 = 0.0f;
+			float x1 = x0 + w;
+			float y1 = randomFloat(1, 101);
+			float z1 = z0 + w;
+
+			boxes1.add(box(vec3(x0, y0, z0), vec3(x1, y1, z1), ground));
+		}
+	}
+
+	HittableList world;
+
+	world.add(std::make_shared<BVHNode>(boxes1));
+
+	auto light = std::make_shared<DiffuseLight>(color(7, 7, 7));
+	world.add(std::make_shared<Quad>(vec3(123, 554, 147), vec3(300, 0, 0), vec3(0, 0, 265), light));
+
+	auto center1 = vec3(400, 400, 200);
+	auto center2 = center1 + vec3(30, 0, 0);
+	auto sphereMaterial = std::make_shared<Lambertian>(color(0.7f, 0.3f, 0.1f));
+	world.add(std::make_shared<Sphere>(center1, center2, 50, sphereMaterial));
+
+	world.add(std::make_shared<Sphere>(vec3(260, 150, 45), 50, std::make_shared<Dielectric>(1.5f)));
+	world.add(std::make_shared<Sphere>(
+		vec3(0, 150, 145), 50, std::make_shared<Metal>(color(0.8f, 0.8f, 0.9f), 1.0f)
+	));
+
+	auto boundary = std::make_shared<Sphere>(vec3(360, 150, 145), 70, std::make_shared<Dielectric>(1.5f));
+	world.add(boundary);
+	world.add(std::make_shared<ConstantMedium>(boundary, 0.2f, color(0.2f, 0.4f, 0.9f)));
+	boundary = std::make_shared<Sphere>(vec3(0, 0, 0), 5000, std::make_shared<Dielectric>(1.5f));
+	world.add(std::make_shared<ConstantMedium>(boundary, 0.0001f, color(1, 1, 1)));
+
+	auto emat = std::make_shared<Lambertian>(std::make_shared<ImageTexture>("image/earthmap.jpg"));
+	world.add(std::make_shared<Sphere>(vec3(400, 200, 400), 100, emat));
+	auto pertext = std::make_shared<NoiseTexture>(0.2f);
+    world.add(std::make_shared<Sphere>(vec3(220, 280, 300), 80, std::make_shared<Lambertian>(pertext)));
+
+	HittableList boxes2;
+	auto white = std::make_shared<Lambertian>(color(0.73f, 0.73f, 0.73f));
+	int ns = 1000;
+	for (int j = 0; j < ns; j++) {
+        boxes2.add(std::make_shared<Sphere>(vec3::Random(0, 165), 10, white));
+    }
+
+	world.add(std::make_shared<Translate>(
+		std::make_shared<RotateY>(
+			std::make_shared<BVHNode>(boxes2), 15
+		),
+		vec3(-100, 270, 395)
+	));
+
+	Camera camera;
+
+	camera.Width = imageWidth;
+	camera.Height = imageHeight;
+	camera.SPP = SPP;
+	camera.maxDepth = maxDepth;
+	camera.background = color(0, 0, 0);
+
+	camera.vfov = 40.0f;
+	camera.lookFrom = vec3(478.0f, 278.0f, -600.0f);
+	camera.lookAt = vec3(278.0f, 278.0f, 0.0f);
+	camera.vUp = vec3(0.0f, 1.0f, 0.0f);
+
+	camera.defocusAngle = 0.0f;
+
+	TIMER(camera.render(world));
+}
+
 int main()
 {
-	switch (8) {
+	switch (10) {
 		case 1: bouncingSpheres(); break;
 		case 2: checkeredSpheres(); break;
 		case 3: earth(); break;
@@ -328,5 +407,7 @@ int main()
 		case 6: simpleLight(); break;
 		case 7: cornellBox(); break;
 		case 8: cornellSmoke(); break;
+		case 9: finalScene(800, 800, 10000, 40); break;
+		default: finalScene(400, 400, 250, 4); break;
 	}
 }

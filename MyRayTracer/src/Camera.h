@@ -33,7 +33,7 @@ public:
 #if MULTI_THREAD == 1
 		std::vector<vec3> framebuffer(Width * Height);
 
-		const int numThreads = std::thread::hardware_concurrency();
+		const int numThreads = std::thread::hardware_concurrency() / 2;
 		std::vector<std::thread> threads;
 		threads.reserve(numThreads);
 
