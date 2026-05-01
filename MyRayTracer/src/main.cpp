@@ -9,6 +9,7 @@
 #include "Texture.h"
 
 #include "Camera.h"
+#include "ConstantMedium.h"
 
 #include <chrono>
 
@@ -273,9 +274,52 @@ void cornellBox() {
 	TIMER(camera.render(HittableList(world)));
 }
 
+void cornellSmoke() {
+	HittableList world;
+
+	auto red = std::make_shared<Lambertian>(color(0.65f, 0.05f, 0.05f));
+	auto white = std::make_shared<Lambertian>(color(0.73f, 0.73f, 0.73f));
+	auto green = std::make_shared<Lambertian>(color(0.12f, 0.45f, 0.15f));
+	auto light = std::make_shared<DiffuseLight>(color(7, 7, 7));
+
+	world.add(std::make_shared<Quad>(vec3(555, 0, 0), vec3(0, 555, 0), vec3(0, 0, 555), green));
+	world.add(std::make_shared<Quad>(vec3(0, 0, 0), vec3(0, 555, 0), vec3(0, 0, 555), red));
+	world.add(std::make_shared<Quad>(vec3(113, 554, 127), vec3(330, 0, 0), vec3(0, 0, 305), light));
+	world.add(std::make_shared<Quad>(vec3(0, 555, 0), vec3(555, 0, 0), vec3(0, 0, 555), white));
+	world.add(std::make_shared<Quad>(vec3(0, 0, 0), vec3(555, 0, 0), vec3(0, 0, 555), white));
+	world.add(std::make_shared<Quad>(vec3(0, 0, 555), vec3(555, 0, 0), vec3(0, 555, 0), white));
+
+	std::shared_ptr<Hittable> box1 = box(vec3(0, 0, 0), vec3(165, 330, 165), white);
+	box1 = std::make_shared<RotateY>(box1, 15);
+	box1 = std::make_shared<Translate>(box1, vec3(265, 0, 295));
+	
+	std::shared_ptr<Hittable> box2 = box(vec3(0, 0, 0), vec3(165, 165, 165), white);
+	box2 = std::make_shared<RotateY>(box2, -18);
+	box2 = std::make_shared<Translate>(box2, vec3(130, 0, 65));
+	
+	world.add(std::make_shared<ConstantMedium>(box1, 0.01f, color(0, 0, 0)));
+	world.add(std::make_shared<ConstantMedium>(box2, 0.01f, color(1, 1, 1)));
+
+	Camera camera;
+	camera.Width = 600;
+	camera.Height = 600;
+	camera.SPP = 200;
+	camera.maxDepth = 50;
+	camera.background = color(0, 0, 0);
+
+	camera.vfov = 40.0f;
+	camera.lookFrom = vec3(278.0f, 278.0f, -800.0f);
+	camera.lookAt = vec3(278.0f, 278.0f, 0.0f);
+	camera.vUp = vec3(0.0f, 1.0f, 0.0f);
+
+	camera.defocusAngle = 0.0f;
+
+	TIMER(camera.render(HittableList(world)));
+}
+
 int main()
 {
-	switch (7) {
+	switch (8) {
 		case 1: bouncingSpheres(); break;
 		case 2: checkeredSpheres(); break;
 		case 3: earth(); break;
@@ -283,5 +327,6 @@ int main()
 		case 5: quads(); break;
 		case 6: simpleLight(); break;
 		case 7: cornellBox(); break;
+		case 8: cornellSmoke(); break;
 	}
 }
